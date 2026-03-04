@@ -1,25 +1,32 @@
-name: Build Iris APK
+name: Build APK
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build:
-    name: Build APK
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'
-        java-version: '17'
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
 
-    - run: ./gradlew assembleDebug
+      - name: Grant execute permission
+        run: chmod +x gradlew
 
-    - uses: actions/upload-artifact@v3
-      with:
-        name: Iris-debug-apk
-        path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: iris-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
